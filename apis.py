@@ -8,6 +8,7 @@ import codecs
 from bs4 import BeautifulSoup
 import glob
 
+from pdf2docx import Converter
 from cryptography.fernet import Fernet
 import pdfkit
 
@@ -39,6 +40,24 @@ def doctohtml():
     except Exception as e:
         print(e)
 
+""" API for Conversion of PDF to Doc """
+
+@app.route('/pdftodoc', methods=['GET','POST'])
+def pdftodoc():
+    try:
+        if request.method == 'POST':
+            filepath = request.form['fullPath']
+            print("File path",filepath) #Only to be uncommented in case of testing
+            cv = Converter(filepath)
+            print("HERE")
+            a=cv.convert(filepath+'.docx', start=0, end=None)
+            cv.close()
+            return f' Doc file generated and saved successfully with name { filepath }.docx'
+
+        else:
+            return f'Kindly trigger API using POST method'
+    except Exception as e:
+        print(e)
 
 
 port = int(os.getenv('PORT', 8080)) 
