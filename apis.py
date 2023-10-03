@@ -95,6 +95,24 @@ def htmltopdf():
     except Exception as e:
         print(e)
 
+@app.route('/keygen', methods=['GET','POST'])
+def key_generation():
+    try:
+        if request.method == 'POST':
+                # key generation
+            key = Fernet.generate_key()
+
+            # string the key in a file
+            with open('filekey.key', 'wb') as filekey:
+                filekey.write(key)
+            return f'Key has been generated'
+
+        else:
+            return f'Kindly trigger API using POST method'
+    except Exception as e:
+        print(e)
+
+
 
 port = int(os.getenv('PORT', 8080)) 
 
