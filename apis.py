@@ -112,7 +112,72 @@ def key_generation():
     except Exception as e:
         print(e)
 
+@app.route('/encryptor', methods=['GET','POST'])
+def file_encryption():
+    try:
+        if request.method == 'POST':
+            filepath = request.form['fullPath']
+            key = Fernet.generate_key()
 
+            # string the key in a file
+            with open('filekey.key', 'wb') as filekey:
+                filekey.write(key)
+
+
+                # opening the key
+            with open('filekey.key', 'rb') as filekey:
+                key = filekey.read()
+
+            # using the generated key
+            fernet = Fernet(key)
+
+            # opening the original file to encrypt
+            with open(filepath, 'rb') as file1:
+                original = file1.read()
+                
+            # encrypting the file
+            encrypted = fernet.encrypt(original)
+
+            # opening the file in write mode and
+            # writing the encrypted data
+            with open(filepath, 'wb') as encrypted_file:
+                encrypted_file.write(encrypted)
+            return f'File has been encrypted successfully'
+        else:
+            return f'Kindly trigger API using POST method'
+
+    except Exception as e:
+        print(e)
+
+@app.route('/decryptor', methods=['GET','POST'])
+def file_decryption():
+    try:
+        if request.method == 'POST':
+            filepath = request.form['fullPath']
+            with open('filekey.key', 'rb') as filekey:
+                key = filekey.read()
+
+            # using the key
+            fernet = Fernet(key)
+            
+            # opening the encrypted file
+            with open(filepath, 'rb') as enc_file:
+                encrypted = enc_file.read()
+            
+            # decrypting the file
+            decrypted = fernet.decrypt(encrypted)
+            
+            # opening the file in write mode and
+            # writing the decrypted data
+            with open(filepath, 'wb') as dec_file:
+                dec_file.write(decrypted)
+            return f'File has been decrypted successfully'
+        
+        else:
+            return f'Kindly trigger API using POST method'
+
+    except Exception as e:
+        print(e)
 
 port = int(os.getenv('PORT', 8080)) 
 
