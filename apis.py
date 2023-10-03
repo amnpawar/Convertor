@@ -77,6 +77,24 @@ def doctopdf():
     except Exception as e:
         print(e)
 
+""" API for Conversion of HTML to PDF """
+
+@app.route('/htmltopdf', methods=['GET','POST'])
+def htmltopdf():
+    try:
+        if request.method == 'POST':
+            filepath = request.form['fullPath']
+            print("File path",filepath) #Only to be uncommented in case of testing
+            # pythoncom.CoInitialize()
+            config = pdfkit.configuration(wkhtmltopdf = r"C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe")
+            pdfkit.from_file(filepath, filepath+'.pdf', configuration = config)
+            return f' Pdf file generated and saved successfully with name { filepath }.pdf'
+
+        else:
+           return f'Kindly trigger API using POST method'
+    except Exception as e:
+        print(e)
+
 
 port = int(os.getenv('PORT', 8080)) 
 
