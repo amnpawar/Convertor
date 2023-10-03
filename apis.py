@@ -9,6 +9,7 @@ from bs4 import BeautifulSoup
 import glob
 
 from pdf2docx import Converter
+from docx2pdf import convert
 from cryptography.fernet import Fernet
 import pdfkit
 
@@ -53,6 +54,23 @@ def pdftodoc():
             a=cv.convert(filepath+'.docx', start=0, end=None)
             cv.close()
             return f' Doc file generated and saved successfully with name { filepath }.docx'
+
+        else:
+            return f'Kindly trigger API using POST method'
+    except Exception as e:
+        print(e)
+
+""" API for Conversion of Doc to PDF """
+
+@app.route('/doctopdf', methods=['GET','POST'])
+def doctopdf():
+    try:
+        if request.method == 'POST':
+            filepath = request.form['fullPath']
+            # print("File path",filepath) #Only to be uncommented in case of testing
+            pythoncom.CoInitialize()
+            convert(filepath,filepath+'.pdf')
+            return f' Pdf file generated and saved successfully with name { filepath }.pdf'
 
         else:
             return f'Kindly trigger API using POST method'
